@@ -153,7 +153,7 @@ def main():
     """Command line interface for the PDF parser."""
     parser = argparse.ArgumentParser(description="Parse PDF documents using OpenAI's GPT-4o-mini model")
     parser.add_argument("path", help="Path to a PDF file or directory containing PDFs")
-    parser.add_argument("--schema", required=True, help="Path to JSON schema file")
+    parser.add_argument("--schema", help="Path to JSON schema file (defaults to default_schema.json)")
     parser.add_argument("--output", help="Path to save the output JSON (optional, results always go to stdout)")
     parser.add_argument("--api-key", help="OpenAI API key (can also be set via OPENAI_API_KEY environment variable)")
     parser.add_argument("--api-base", help="OpenAI API base URL (can also be set via OPENAI_API_BASE environment variable)")
@@ -164,9 +164,17 @@ def main():
     
     args = parser.parse_args()
     
+    # Set schema path - use default if not specified
+    schema_path = args.schema if args.schema else "default_schema.json"
+    
+    # Check if schema file exists
+    if not os.path.exists(schema_path):
+        print(f"Error: Schema file '{schema_path}' not found.", file=sys.stderr)
+        return 1
+    
     # Load schema from file
     try:
-        with open(args.schema, 'r') as f:
+        with open(schema_path, 'r') as f:
             schema = json.load(f)
             
         # Ensure schema includes source_file property if it's an object
@@ -176,6 +184,9 @@ def main():
                     "type": "string",
                     "description": "Source PDF filename"
                 }
+    except json.JSONDecodeError:
+        print(f"Error: Schema file '{schema_path}' contains invalid JSON.", file=sys.stderr)
+        return 1
     except Exception as e:
         print(f"Error loading schema file: {e}", file=sys.stderr)
         return 1
