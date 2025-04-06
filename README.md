@@ -31,14 +31,27 @@ Alternatively, you can provide these values as command-line arguments.
 ## Usage
 
 ```bash
-python parser.py path/to/document.pdf --schema path/to/schema.json [--output output.json] [--api-key OPENAI_API_KEY] [--api-base OPENAI_API_BASE]
+# Process a single PDF file
+python parser.py path/to/document.pdf --schema path/to/schema.json [--output output.json]
+
+# Process all PDFs in a directory (non-recursive)
+python parser.py path/to/directory --schema path/to/schema.json [--output output.json]
+
+# Process all PDFs in a directory recursively
+python parser.py path/to/directory --schema path/to/schema.json --recursive [--output output.json]
+
+# Pretty print the JSON output
+python parser.py path/to/document.pdf --schema path/to/schema.json --pretty
 ```
 
 ### Arguments
 
-- `pdf_path`: Path to the PDF file to parse
+- `path`: Path to a PDF file or directory containing PDFs
 - `--schema`: Path to the JSON schema file defining the structure of the output
 - `--output`: (Optional) Path to save the JSON output (results are always printed to stdout)
+- `--recursive`, `-r`: (Optional) Recursively search for PDFs in subdirectories
+- `--max-workers`: (Optional) Maximum number of concurrent PDF processing tasks (default: 4)
+- `--pretty`: (Optional) Pretty print the JSON output
 - `--api-key`: (Optional) OpenAI API key (can also be set via OPENAI_API_KEY environment variable)
 - `--api-base`: (Optional) OpenAI API base URL (can also be set via OPENAI_API_BASE environment variable)
 
