@@ -140,6 +140,12 @@ def main():
             print("No data to convert", file=sys.stderr)
             return 1
             
+        # Sort data by releaseSummary.releaseDate if it exists
+        flattened_data = sorted(
+            flattened_data,
+            key=lambda x: x.get('releaseSummary.releaseDate', ''),
+        )
+            
         # Convert to the appropriate format
         if args.to_xlsx:
             convert_to_excel(flattened_data, output_path, headers)
