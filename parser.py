@@ -7,11 +7,15 @@ import sys
 import json
 import argparse
 import pathlib
+import logging
 from typing import Dict, Any, Optional, List
 import pdfplumber
 from openai import OpenAI
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# Suppress the specific warning about CropBox
+logging.getLogger("pdfminer").setLevel(logging.ERROR)
 
 # Load environment variables from .env file
 load_dotenv()
