@@ -6,7 +6,7 @@ A Python tool for parsing PDF documents using OpenAI's GPT-4o-mini model to extr
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/etrade-parser.git
+git clone https://github.com/esukram/etrade-parser.git
 cd etrade-parser
 
 # Set up Python virtual environment (recommended)
