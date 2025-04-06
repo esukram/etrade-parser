@@ -10,7 +10,19 @@
         },
         "awardNumber": {
           "type": "number",
-          "description": "RSU Award number (e.g., '23001279')"
+          "description": "Award number (e.g., '23001279')"
+        },
+        "awardDate": {
+          "type": "string",
+          "description": "Award Date (e.g., '30-06-2020')"
+        },
+        "awardType": {
+          "type": "string",
+          "description": "Award Type (e.g., 'RSU')"
+        },
+        "plan": {
+          "type": "number",
+          "description": "Plan (e.g., '2020')"
         },
         "releaseDate": {
           "type": "string",
