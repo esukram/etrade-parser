@@ -130,12 +130,14 @@ def process_pdf(pdf_path: str, schema: Dict[str, Any], pdf_parser: PDFParser) ->
     try:
         # Get the filename to include in the result
         pdf_filename = os.path.basename(pdf_path)
+        pdf_full_path = os.path.abspath(pdf_path)
         
         # Parse the PDF
         result = pdf_parser.parse_pdf(pdf_path, schema)
         
-        # Add the source filename to the result
+        # Add the source filename and full path to the result
         result["source_file"] = pdf_filename
+        result["source_path"] = pdf_full_path
         
         return {
             "path": pdf_path,
@@ -177,12 +179,17 @@ def main():
         with open(schema_path, 'r') as f:
             schema = json.load(f)
             
-        # Ensure schema includes source_file property if it's an object
+        # Ensure schema includes source_file and source_path properties if it's an object
         if schema.get("type") == "object" and "properties" in schema:
             if "source_file" not in schema["properties"]:
                 schema["properties"]["source_file"] = {
                     "type": "string",
                     "description": "Source PDF filename"
+                }
+            if "source_path" not in schema["properties"]:
+                schema["properties"]["source_path"] = {
+                    "type": "string",
+                    "description": "Full absolute path to the source PDF file"
                 }
     except json.JSONDecodeError:
         print(f"Error: Schema file '{schema_path}' contains invalid JSON.", file=sys.stderr)
@@ -223,8 +230,10 @@ def main():
             pdf_path = pdf_files[0]
             try:
                 pdf_filename = os.path.basename(pdf_path)
+                pdf_full_path = os.path.abspath(pdf_path)
                 result = pdf_parser.parse_pdf(pdf_path, schema)
                 result["source_file"] = pdf_filename
+                result["source_path"] = pdf_full_path
                 all_results.append(result)
                 print(f"Successfully processed: {pdf_path}", file=sys.stderr)
             except Exception as e:
