@@ -1,6 +1,6 @@
 # E-Trade PDF Parser
 
-A Python tool for parsing PDF documents using OpenAI's GPT-4o-mini model to extract structured data according to a defined JSON schema.
+A Python tool for parsing PDF documents using OpenAI's GPT-4o-mini model to extract structured data according to a defined JSON schema. Includes conversion utilities to transform the extracted JSON data into CSV format for easier analysis.
 
 ## Installation
 
@@ -94,4 +94,25 @@ Create a JSON file that defines the structure of the data you want to extract:
 python parser.py statements/march_2023.pdf --schema schemas/statement_schema.json --output parsed_statement.json
 # Recursively parse all PDFs in a directory with ignore directory
 python parser.py --schema default_schema.json --recursive --ignore-dirs sell -- ${home}/shares/2024/
+
+# Convert JSON output to CSV
+python convert.py parsed_output.json --output parsed_output.csv
+
+# Print the flattened structure for the first record
+python convert.py parsed_output.json --pretty
 ```
+
+## JSON to CSV Conversion
+
+After parsing PDFs into structured JSON data, you can convert the results to CSV format:
+
+```bash
+python convert.py path/to/input.json [--output path/to/output.csv] [--headers field1 field2 ...] [--pretty]
+```
+
+### Conversion Arguments
+
+- `json_file`: Path to the JSON file to convert
+- `--output`, `-o`: (Optional) Path for the output CSV file (defaults to input filename with .csv extension)
+- `--headers`: (Optional) Specific headers to include in the CSV
+- `--pretty`: (Optional) Print the flattened structure of the first record to understand available fields
