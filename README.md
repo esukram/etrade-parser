@@ -92,4 +92,6 @@ Create a JSON file that defines the structure of the data you want to extract:
 ```bash
 # Parse a statement PDF using a schema and save the output
 python parser.py statements/march_2023.pdf --schema schemas/statement_schema.json --output parsed_statement.json
+# Recursively parse all PDFs in a directory with ignore directory
+python parser.py --schema default_schema.json --recursive --ignore-dirs sell -- ${home}/shares/2024/
 ```

@@ -106,9 +106,10 @@ class PDFParser:
         except Exception as e:
             raise Exception(f"Error calling OpenAI API: {e}")
 
-def find_pdf_files(directory: str) -> List[str]:
-    """Find all PDF files in a directory recursively."""
+def find_pdf_files(directory: str, ignore_dirs: List[str] = None) -> List[str]:
+    """Find all PDF files in a directory recursively, optionally ignoring specified directories."""
     pdf_files = []
+    ignore_dirs = ignore_dirs or []
     
     directory_path = pathlib.Path(directory)
     if not directory_path.exists():
@@ -118,7 +119,9 @@ def find_pdf_files(directory: str) -> List[str]:
         return [str(directory_path)]
     
     for path in directory_path.glob('**/*.pdf'):
-        pdf_files.append(str(path))
+        # Check if any parent directory should be ignored
+        if not any(ignore_dir in path.parts for ignore_dir in ignore_dirs):
+            pdf_files.append(str(path))
     
     return sorted(pdf_files)
 
@@ -155,6 +158,7 @@ def main():
     parser.add_argument("--api-key", help="OpenAI API key (can also be set via OPENAI_API_KEY environment variable)")
     parser.add_argument("--api-base", help="OpenAI API base URL (can also be set via OPENAI_API_BASE environment variable)")
     parser.add_argument("--recursive", "-r", action="store_true", help="Recursively search for PDFs in directories")
+    parser.add_argument("--ignore-dirs", nargs="+", default=[], help="Directories to ignore when recursively searching (e.g., --ignore-dirs sell archive temp)")
     parser.add_argument("--max-workers", type=int, default=4, help="Maximum number of concurrent PDF processing tasks")
     parser.add_argument("--pretty", action="store_true", help="Pretty print the JSON output")
     
@@ -179,7 +183,7 @@ def main():
     # Find PDF files to process
     try:
         if args.recursive:
-            pdf_files = find_pdf_files(args.path)
+            pdf_files = find_pdf_files(args.path, ignore_dirs=args.ignore_dirs)
         else:
             # Single file mode
             if os.path.isfile(args.path) and args.path.lower().endswith('.pdf'):
