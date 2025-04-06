@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Convert JSON output from PDF parser to CSV format.
-Takes the JSON output from parser.py and creates a CSV file.
+Convert JSON output from PDF parser to CSV or Excel format.
+Takes the JSON output from parser.py and creates a CSV or Excel file.
 """
 import json
 import csv
@@ -9,6 +9,7 @@ import sys
 import argparse
 import os
 from typing import Dict, Any, List, Optional
+import pandas as pd
 
 
 def flatten_json(nested_json: Dict[str, Any], prefix: str = '') -> Dict[str, Any]:
@@ -32,14 +33,14 @@ def flatten_json(nested_json: Dict[str, Any], prefix: str = '') -> Dict[str, Any
     return flattened
 
 
-def convert_json_to_csv(json_data: List[Dict[str, Any]], output_path: str, headers: Optional[List[str]] = None):
+def prepare_flattened_data(json_data: List[Dict[str, Any]], headers: Optional[List[str]] = None):
     """
-    Convert JSON data to CSV format and write to file.
-    If no headers are provided, use all flattened keys from the first record.
+    Prepare flattened data from JSON objects, with optional header filtering.
+    Returns flattened data and headers.
     """
     if not json_data:
         print("No data to convert", file=sys.stderr)
-        return
+        return [], []
     
     # Flatten all JSON objects
     flattened_data = [flatten_json(item) for item in json_data]
@@ -47,11 +48,18 @@ def convert_json_to_csv(json_data: List[Dict[str, Any]], output_path: str, heade
     # Determine headers - either use provided headers or collect all unique keys
     if not headers:
         # Get all unique keys from all flattened records
-        headers = set()
+        all_headers = set()
         for item in flattened_data:
-            headers.update(item.keys())
-        headers = sorted(list(headers))
+            all_headers.update(item.keys())
+        headers = sorted(list(all_headers))
     
+    return flattened_data, headers
+
+
+def convert_to_csv(flattened_data: List[Dict[str, Any]], output_path: str, headers: List[str]):
+    """
+    Convert flattened data to CSV format and write to file.
+    """
     # Write to CSV
     with open(output_path, 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=headers)
@@ -63,13 +71,34 @@ def convert_json_to_csv(json_data: List[Dict[str, Any]], output_path: str, heade
             writer.writerow(row)
 
 
+def convert_to_excel(flattened_data: List[Dict[str, Any]], output_path: str, headers: List[str]):
+    """
+    Convert flattened data to Excel format and write to file.
+    """
+    # Create DataFrame from flattened data with specified headers
+    df_data = []
+    for item in flattened_data:
+        row_data = {header: item.get(header, '') for header in headers}
+        df_data.append(row_data)
+    
+    df = pd.DataFrame(df_data)
+    
+    # Write to Excel file
+    df.to_excel(output_path, index=False)
+
+
 def main():
-    """Main function to handle command line arguments and convert JSON to CSV."""
-    parser = argparse.ArgumentParser(description="Convert JSON output from PDF parser to CSV format")
+    """Main function to handle command line arguments and convert JSON to CSV or Excel."""
+    parser = argparse.ArgumentParser(description="Convert JSON output from PDF parser to CSV or Excel format")
     parser.add_argument("json_file", help="Path to the JSON file to convert")
-    parser.add_argument("--output", "-o", help="Path for the output CSV file (defaults to input filename with .csv extension)")
-    parser.add_argument("--headers", nargs="+", help="Specific headers to include in the CSV (optional)")
+    parser.add_argument("--output", "-o", help="Path for the output file (defaults to input filename with appropriate extension)")
+    parser.add_argument("--headers", nargs="+", help="Specific headers to include in the output file (optional)")
     parser.add_argument("--pretty", action="store_true", help="Print flattened structure to stdout")
+    
+    # Output format options group
+    format_group = parser.add_mutually_exclusive_group()
+    format_group.add_argument("--to-csv", action="store_true", help="Convert to CSV format (default)")
+    format_group.add_argument("--to-xlsx", action="store_true", help="Convert to Excel format")
     
     args = parser.parse_args()
     
@@ -78,11 +107,14 @@ def main():
         print(f"Error: JSON file '{args.json_file}' not found.", file=sys.stderr)
         return 1
     
+    # Determine output format - default to CSV if none specified
+    output_format = "xlsx" if args.to_xlsx else "csv"
+    
     # Set output filename if not provided
     output_path = args.output
     if not output_path:
         base_name = os.path.splitext(args.json_file)[0]
-        output_path = f"{base_name}.csv"
+        output_path = f"{base_name}.{output_format}"
     
     # Load JSON data
     try:
@@ -99,9 +131,21 @@ def main():
         print(f"Error loading JSON file: {e}", file=sys.stderr)
         return 1
     
-    # Convert and save to CSV
+    # Convert and save to the appropriate format
     try:
-        convert_json_to_csv(json_data, output_path, args.headers)
+        # Prepare flattened data
+        flattened_data, headers = prepare_flattened_data(json_data, args.headers)
+        
+        if len(flattened_data) == 0:
+            print("No data to convert", file=sys.stderr)
+            return 1
+            
+        # Convert to the appropriate format
+        if args.to_xlsx:
+            convert_to_excel(flattened_data, output_path, headers)
+        else:
+            convert_to_csv(flattened_data, output_path, headers)
+            
         print(f"Successfully converted {args.json_file} to {output_path}", file=sys.stderr)
         
         # If --pretty flag is set, print the flattened structure of the first item
@@ -113,7 +157,7 @@ def main():
         
         return 0
     except Exception as e:
-        print(f"Error converting to CSV: {e}", file=sys.stderr)
+        print(f"Error converting file: {e}", file=sys.stderr)
         return 1
 
 

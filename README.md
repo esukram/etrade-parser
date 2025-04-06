@@ -102,17 +102,23 @@ python convert.py parsed_output.json --output parsed_output.csv
 python convert.py parsed_output.json --pretty
 ```
 
-## JSON to CSV Conversion
+## JSON Conversion Utilities
 
-After parsing PDFs into structured JSON data, you can convert the results to CSV format:
+After parsing PDFs into structured JSON data, you can convert the results to CSV or Excel format:
 
 ```bash
+# Convert to CSV (default)
 python convert.py path/to/input.json [--output path/to/output.csv] [--headers field1 field2 ...] [--pretty]
+
+# Convert to Excel
+python convert.py path/to/input.json --to-xlsx [--output path/to/output.xlsx] [--headers field1 field2 ...] [--pretty]
 ```
 
 ### Conversion Arguments
 
 - `json_file`: Path to the JSON file to convert
-- `--output`, `-o`: (Optional) Path for the output CSV file (defaults to input filename with .csv extension)
-- `--headers`: (Optional) Specific headers to include in the CSV
+- `--output`, `-o`: (Optional) Path for the output file (defaults to input filename with appropriate extension)
+- `--headers`: (Optional) Specific headers to include in the output file
 - `--pretty`: (Optional) Print the flattened structure of the first record to understand available fields
+- `--to-csv`: (Optional) Convert to CSV format (default behavior)
+- `--to-xlsx`: (Optional) Convert to Excel format (.xlsx)
