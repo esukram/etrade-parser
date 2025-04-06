@@ -1,0 +1,115 @@
+{
+  "type": "object",
+  "properties": {
+    "releaseSummary": {
+      "type": "object",
+      "properties": {
+        "accountNumber": {
+          "type": "number",
+          "description": "The etrade account number (e.g., '891757884')"
+        },
+        "awardNumber": {
+          "type": "number",
+          "description": "RSU Award number (e.g., '23001279')"
+        },
+        "releaseDate": {
+          "type": "string",
+          "description": "Vesting date (e.g., '02-15-2021')"
+        },
+        "sharesReleased": {
+          "type": "number",
+          "description": "Shares Released (e.g., '13.0000')"
+        },
+        "marketValuePerShare" : {
+          "type": "number",
+          "description": "Market Value Per Share(e.g., '$40.445800')"
+        },
+        "salePricePerShare" : {
+          "type": "number",
+          "description": "Sale Price Per Share (e.g., '$40.345800')"
+        }
+      }
+    },
+    "releaseDetails": {
+      "type": "object",
+      "properties": {
+        "calculationOfGain": {
+          "type": "object",
+          "properties": {
+            "marketValue": {
+              "type": "number",
+              "description": "Market Value (e.g., '$2,345.47')"
+            },
+            "awardPrice": {
+              "type": "number",
+              "description": "Award Price (e.g., '($0.00)')"
+            },
+            "totalGain": {
+              "type": "number",
+              "description": "Total Gain (e.g., '$2,345.47')"
+            }
+          }
+        },
+        "calculationofTaxes": {
+          "type": "object",
+          "properties": {
+            "taxType": {
+              "type": "String",
+              "description": "Tax Type (e.g., 'Austria 50')"
+            },
+            "taxableGainUSD": {
+              "type": "number",
+              "description": "Taxable Gain $ (e.g., '2,323.47')"
+            },
+            "ratePercent": {
+              "type": "number",
+              "description": "Rate % (e.g., '50.000')"
+            },
+            "amountUSD": {
+              "type": "number",
+              "description": "Amount $ (e.g., '1,161.73')"
+            }
+          }
+        },
+        "stockDistribution": {
+          "type": "object",
+          "properties": {
+            "awardShares": {
+              "type": "number",
+              "description": "Award Shares (e.g., '13.000')"
+            },
+            "sharesSold": {
+              "type": "number",
+              "description": "Shares Sold (e.g., '(8.0000)')"
+            },
+            "sharesIssued": {
+              "type": "number",
+              "description": "Shares Issued (e.g., '5.0000')"
+            }
+          }
+        },
+        "cashDistribution": {
+          "type": "object",
+          "properties": {
+            "totalSalePrice": {
+              "type": "number",
+              "description": "Award Shares (e.g., '13.000')"
+            },
+            "totalTax": {
+              "type": "number",
+              "description": "Total Tax (e.g., '($1,161.73)')"
+            },
+            "fee": {
+              "type": "number",
+              "description": "Fee (e.g., '(1.23)')"
+            },
+            "totalDueParticipant": {
+              "type": "number",
+              "description": "Total Due Participant (e.g., '$28.67')"
+            }
+          }
+        }
+      }
+    }
+  }
+}
