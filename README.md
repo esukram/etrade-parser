@@ -1,6 +1,6 @@
 # E-Trade PDF Parser
 
-A Python tool for parsing PDF documents using OpenAI's GPT-4o-mini model to extract structured data according to a defined JSON schema. Includes conversion utilities to transform the extracted JSON data into CSV format for easier analysis.
+A Python tool for parsing PDF documents using OpenAI's GPT-4o-mini model to extract structured data according to a defined JSON schema. Includes conversion utilities to transform the extracted JSON data into CSV, XLSX format for easier analysis.
 
 ## Installation
 
