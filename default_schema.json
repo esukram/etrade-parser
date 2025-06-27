@@ -66,7 +66,7 @@
           "type": "object",
           "properties": {
             "taxType": {
-              "type": "String",
+              "type": "string",
               "description": "Tax Type (e.g., 'Austria 50')"
             },
             "taxableGainUSD": {
